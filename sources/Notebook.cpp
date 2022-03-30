@@ -1,3 +1,7 @@
+//
+// Created by barse on 3/22/2022.
+//
+
 #include "Notebook.hpp"
 #include <unordered_map>
 #include <array>
@@ -5,37 +9,34 @@
 #include<math.h>
 using namespace std ;
 using ariel ::Direction;
-
-
-/////
-const char minValidChar = 32 ;
-const char maxValidChar = 126; 
-const char COLL99_INDEX = 99;
 const char HUNDRED = 100 ; 
+const char MIN = 32 ;
+const char MAX = 126; 
+const char COL_NUMBER99 = 99;
+
+
+
+
 
 void copy_vector( array<char,HUNDRED> & a_Src , array<char,HUNDRED> & a_dest){
     for(size_t i = 0 ; i <HUNDRED; i++){
         a_dest.at(i) = a_Src.at(i);
     }
 }
-
 void ariel::Notebook::write(int page, int row , int col, Direction dir, string str) {
  for(size_t i = 0 ; i < str.length(); i++){
-    if ((str[i] < minValidChar) || (str[i] >maxValidChar) || (str[i] == '~')) {
-            throw "iligal";
-    }
-    }
-    if(page < 0 || row < 0 || col < 0 || col> COLL99_INDEX || str.find('\n') != -1 )  {
-         throw "iligal";
-    }
-    if(((size_t)col + str.length() > COLL99_INDEX+1) && (dir == Direction::Horizontal)){
-        throw "iligal";     
-    }
-    if(floor(page)!= page|| floor(row) != row || floor(col) != col){
-         throw "iligal";           
+    if ((str[i] < MIN) || (str[i] >MAX) || (str[i] == '~')) {
+            throw "1";
     }
     if(str.length() == 0){
-        throw "iligal";
+        throw "1";
+    }
+    }
+    if(page < 0 || row < 0 || col < 0 || col> COL_NUMBER99 || str.find('\n') != -1 )  {
+         throw "1";
+    }
+    if(((size_t)col + str.length() > COL_NUMBER99+1) && (dir == Direction::Horizontal)){
+        throw "1";     
     }
     if (pages.find(page) == pages.end()) {
         unordered_map<int, array<char,HUNDRED>> specifyPage;  /// represt a page
@@ -59,7 +60,7 @@ void ariel::Notebook::write(int page, int row , int col, Direction dir, string s
                 pages[page][(size_t)(row + i)][(size_t)col] = str[(size_t)i];
             }
             else{
-                throw "not legal";
+                throw "1";
             }
         }
     }
@@ -81,14 +82,14 @@ void ariel::Notebook::write(int page, int row , int col, Direction dir, string s
 }
 
 string ariel::Notebook::read(int page, int row, int col, Direction dir, int len) {
-    if(page < 0 || row < 0 || col < 0 || len < 0 || col > COLL99_INDEX){
-         throw "iligal";             
+    if(page < 0 || row < 0 || col < 0 || len < 0 || col > COL_NUMBER99){
+         throw "1";             
     }
-    if((col + len > COLL99_INDEX+1) && (dir == Direction::Horizontal)){ 
-        throw "iligal";   
+    if((col + len > COL_NUMBER99+1) && (dir == Direction::Horizontal)){ 
+        throw "1";   
     }
     if(floor(page)!= page|| floor(row) != row || floor(col) != col || floor(len) !=len){
-               throw "iligal";   
+               throw "1";   
     }
     string str = string("");
     if (pages.find(page) == pages.end()) {
@@ -129,20 +130,19 @@ string ariel::Notebook::read(int page, int row, int col, Direction dir, int len)
 
 
 void ariel::Notebook::erase(int page, int row, int col, Direction dir, int len) {
-    if(page < 0 || row < 0 || col < 0 || len < 0 ||col >COLL99_INDEX){
-          throw "iligal";
+     array<char,HUNDRED> c ={};
+    if(page < 0 || row < 0 || col < 0 || len < 0 ||col >COL_NUMBER99){
+          throw "l";
     }
-    if( (col + len > COLL99_INDEX+1) && (dir == Direction::Horizontal )){ 
-         throw "iligal";;     
+    if( (col + len > COL_NUMBER99+1) && (dir == Direction::Horizontal )){ 
+         throw "1";;     
     }
     if(len == 0){
         return;  
     }  
-    array<char,HUNDRED> c ={};
     for (size_t i = 0; i < HUNDRED; i++) {
         c.at(i) = '_';
     }
-    //ppppppppppppppppppppppppppppppppp
       if (pages.find(page) == pages.end()) {
         unordered_map<int, array<char,HUNDRED>> specifyPage;  /// represt a page
         pages[page]= specifyPage;
@@ -157,11 +157,10 @@ void ariel::Notebook::erase(int page, int row, int col, Direction dir, int len) 
 
         // delete the right places
         for(size_t i=0; i<len; i++){
-           size_t col2 = (size_t)col;
-            pages[page][row][(col2+i)] = '~';
+           size_t COLLSECOND = (size_t)col;
+            pages[page][row][(COLLSECOND+i)] = '~';
         }
     }
-
     if (dir == Direction::Vertical) {
         // create the column
         for (int i = 0; i < len; i++) {
@@ -169,10 +168,7 @@ void ariel::Notebook::erase(int page, int row, int col, Direction dir, int len) 
                 copy_vector(c,pages[page][row + i]);
             }
         }
-
-        // delete the right places
         for(int i=0; i<len; i++){
-            
             pages[page][(size_t)(row+i)][(size_t)col] = '~';
         }
     }
@@ -193,8 +189,9 @@ void ariel::Notebook::show(int page) {
          array<char,HUNDRED> row ={};
         for(unordered_map<int, array<char,HUNDRED>>::iterator itr = pages[page].begin(); itr != pages[page].end(); ++itr){
             copy_vector(itr->second,row);
+            cout <<  itr->first;
             for(size_t i=0; i<HUNDRED; i++){
-                cout<<row.at(i);
+                cout<< row.at(i);
             }
             cout<<endl;
         }
